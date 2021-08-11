@@ -4,9 +4,17 @@ const Workout = require('../../models/workout');
 // Returns all workouts
 router.get('/', async (req, res) => {
   try {
-    const docs = await Workout.aggregate().addFields({
-      totalDuration: { $sum: '$exercises.distance' },
-    });
+    const docs = await Workout.aggregate([
+      {
+        $addFields: {
+          totalDistance: { $sum: '$exercises.distance' },
+          totalDuration: { $sum: '$exercises.duration' },
+          totalWeight: { $sum: '$exercises.weight' },
+          totalReps: { $sum: '$exercises.reps' },
+          totalSets: { $sum: '$exercises.sets' },
+        },
+      },
+    ]);
     res.json(docs);
   } catch (error) {
     console.log(error);
@@ -44,9 +52,19 @@ router.put('/:id', async (req, res) => {
 router.get('/range', async (req, res) => {
   try {
     // Get 7 latest entries by sorting from highest to lowest
-    const data = await Workout.find().sort({ _id: -1 }).limit(7);
+    const data = await Workout.aggregate()
+      .sort({ _id: -1 })
+      .limit(7)
+      .addFields({
+        totalDistance: { $sum: '$exercises.distance' },
+        totalDuration: { $sum: '$exercises.duration' },
+        totalWeight: { $sum: '$exercises.weight' },
+        totalReps: { $sum: '$exercises.reps' },
+        totalSets: { $sum: '$exercises.sets' },
+      });
     // Sort array from lowest to highest id
     data.sort((a, b) => (a._id < b._id ? -1 : 1));
+    console.log(data);
     res.json(data);
   } catch (error) {
     console.log(error);

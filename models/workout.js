@@ -12,7 +12,7 @@ const WorkoutSchema = new Schema(
     // Exercises is an array of exercise objects.
     exercises: [
       {
-        type: String,
+        type: { type: String },
         name: String,
         distance: Number,
         duration: Number,
