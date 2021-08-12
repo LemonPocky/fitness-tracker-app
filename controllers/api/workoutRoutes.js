@@ -64,7 +64,6 @@ router.get('/range', async (req, res) => {
       });
     // Sort array from lowest to highest id
     data.sort((a, b) => (a._id < b._id ? -1 : 1));
-    console.log(data);
     res.json(data);
   } catch (error) {
     console.log(error);
